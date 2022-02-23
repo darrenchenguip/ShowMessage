@@ -10,11 +10,17 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+stages:
+  - stage: Build
+    displayName: Build Package
+    jobs:
+      - job: BuildPackage
+        steps:
+        - task: UiPathPack@2
+          inputs:
+            versionType: 'AutoVersion'
+            projectJsonPath: '$(Build.SourcesDirectory)\ShowMessage'
+            outputType: 'Process'
+            orchestratorConnection: 'Staging Orchestrator'
+            outputPath: '$(Build.ArtifactStagingDirectory)\Output'
+            traceLevel: 'Verbose'
